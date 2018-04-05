@@ -110,6 +110,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dc_util.cpp" />
+    <ClCompile Include="game_player.cpp" />
+    <ClCompile Include="game_process.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CurlingSimulator.h" />
+    <ClInclude Include="dc_util.h" />
+    <ClInclude Include="game_player.h" />
+    <ClInclude Include="game_process.h" />
+    <ClInclude Include="main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
