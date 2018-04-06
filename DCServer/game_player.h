@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Windows.h>
+
 #include <iostream>
 #include <string>
 
@@ -33,7 +35,15 @@ namespace digital_curling
 		// Recieve message from player
 		int Recv(char *message);
 
+		// Create process 
+		// This function returns 0 when CreateProcess was failed
+		int InitProcess();
+
 		std::string path_;  // Full path of .exe file
+
+		PROCESS_INFORMATION pi_;
+		HANDLE write_pipe_;
+		HANDLE read_pipe_;
 
 	};
 

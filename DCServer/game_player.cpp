@@ -43,4 +43,50 @@ namespace digital_curling
 		
 		return 1;
 	}
+
+	// Create Proccess
+	// This function returns 0 when CreateProcess was failed
+	int LocalPlayer::InitProcess()
+	{
+		/*** create pipe ***/
+		HANDLE read_tmp, write_tmp;
+		SECURITY_ATTRIBUTES sa;
+		sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+		sa.lpSecurityDescriptor = NULL;
+		sa.bInheritHandle = TRUE;
+
+		// server -> COM
+		if (!CreatePipe(&read_tmp, &write_pipe_, &sa, 0)) {
+			return;
+		}
+		if (!DuplicateHandle(GetCurrentProcess(), read_tmp, GetCurrentProcess(), &read_pipe_, 0, TRUE, DUPLICATE_SAME_ACCESS)) {
+			return;
+		}
+		CloseHandle(read_tmp);
+
+		// COM -> server
+		if (!CreatePipe(&read_pipe_, &write_tmp, &sa, 0)) {
+			return;
+		}
+		if (!DuplicateHandle(GetCurrentProcess(), write_tmp, GetCurrentProcess(), &(this->write_pipe_), 0, TRUE, DUPLICATE_SAME_ACCESS)) {
+			return;
+		}
+		CloseHandle(write_tmp);
+
+		// redirection
+		STARTUPINFO si;
+		ZeroMemory(&si, sizeof(si));
+		si.cb = sizeof(STARTUPINFO);
+		si.dwFlags = STARTF_USESTDHANDLES;
+		si.hStdInput = this->read_pipe_;
+		si.hStdOutput = this->write_pipe_;
+		si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+
+		if (si.hStdOutput == INVALID_HANDLE_VALUE || si.hStdError == INVALID_HANDLE_VALUE) {
+			return;
+		}
+
+		/*** create process ***/
+		return CreateProcess(NULL, (LPSTR)path_.c_str(), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi_);
+	}
 }
