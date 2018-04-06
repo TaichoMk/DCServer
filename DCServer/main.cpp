@@ -33,9 +33,9 @@ void test_command(char *msg)
 
 int main(void)
 {
-	digital_curling::Player *p1 = new digital_curling::LocalPlayer();
-	digital_curling::Player *p2 = new digital_curling::LocalPlayer();
-	digital_curling::GameProcess game_process(p1, p2, 8, 0);
+	digital_curling::Player *p1 = new digital_curling::LocalPlayer("hoge", 0);
+	digital_curling::Player *p2 = new digital_curling::LocalPlayer("hoge", 0);
+	digital_curling::GameProcess game_process(p1, p2, 8, 0.145, 0);
 
 	digital_curling::PrintState(game_process.gs_);
 

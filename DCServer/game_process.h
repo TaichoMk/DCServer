@@ -13,20 +13,32 @@ namespace digital_curling
 	// DigitalCrling game
 	class GameProcess {
 	public:
-		GameProcess(Player *p1, Player *p2, int num_ends, int rule_type);
+		GameProcess(Player *p1, Player *p2, int num_ends, float random, int rule_type);
 		~GameProcess();
 
 		const int rule_type_;  // Type of rule (0: standard, 1:mix_doubles) 
 
-		// Send 'SETSTATE' command and 'POSITION' command
+		// Send 'NEWGAMWE' command to both player
+		bool NewGame();
+
+		// Send 'SETSTATE' command and 'POSITION' command to both player
 		bool SendState();
 
+		// Simulate a shot
+		bool RunSimulation();
+
+		// Send 'SCORE' command
+		bool SendScore();
+
 		GameState gs_;         // State of the game
+		float     random_;     // Size of random number
+
+		ShotVec best_shot_;    // Shot vector recieved
+		ShotVec run_shot_;     // Shot vector (add random)
 
 		Player    *player1_;   // Player 1
 		Player    *player2_;   // Player 2
 
-	private:
 	};
 
 	// Split message as tokens
