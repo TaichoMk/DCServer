@@ -18,11 +18,20 @@ namespace digital_curling
 
 		const int rule_type_;  // Type of rule (0: standard, 1:mix_doubles) 
 
+		// Send 'ISREADY' command and wait for recieving 'READYOK' from a player
+		bool IsReady(Player *p);
+
 		// Send 'NEWGAMWE' command to both player
 		bool NewGame();
 
+		// Prepare for End
+		//bool PrepareEnd();
+
 		// Send 'SETSTATE' command and 'POSITION' command to both player
 		bool SendState();
+
+		// Send 'GO' command and wait for recieving 'BESTSHOT' from a player
+		//bool Go();
 
 		// Simulate a shot
 		bool RunSimulation();

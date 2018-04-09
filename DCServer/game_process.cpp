@@ -25,6 +25,28 @@ namespace digital_curling
 
 	GameProcess::~GameProcess() {}
 
+	// Send 'ISREADY' command and wait for recieving 'READYOK' from a player
+	bool GameProcess::IsReady(Player *p) {
+		// Send 'ISREADY' to Player
+		p->Send("ISREADY");
+
+		char msg[Player::kBufferSize];
+		// Recieve "READYOK" from player1
+		p->Recv(msg);
+		// split message as token
+		std::vector<std::string> tokens = digital_curling::SpritAsTokens(msg, " ");
+		if (tokens.size() == 0) {
+			cerr << "Error: empty message" << endl;
+			return false;
+		}
+		if (tokens[0] != "READYOK") {
+			cerr << "Error: invalid command '" << tokens[0] << "'" << endl;
+			return false;
+		}
+
+		return true;
+	}
+
 	// Send 'NEWGAMWE' command to both player
 	bool GameProcess::NewGame() {
 		if (player1_ == nullptr || player2_ == nullptr) {
@@ -35,7 +57,9 @@ namespace digital_curling
 		std::stringstream sstream;
 		sstream << "NEWGAME " << player1_->name_ << " " << player2_->name_;
 		player1_->Send(sstream.str().c_str());
-		player2_->Send(sstream.str().c_str());
+		if (player1_ != player2_) {
+			player2_->Send(sstream.str().c_str());
+		}
 
 		return true;
 	}
@@ -73,20 +97,23 @@ namespace digital_curling
 
 	// Simulate a shot
 	bool GameProcess::RunSimulation() {
-		Simulation(&gs_, best_shot_, random_, &run_shot_, -1);
+		cerr << "Simulating..." << endl;
+		//Simulation(&gs_, best_shot_, random_, &run_shot_, -1);
 
-		return 0;
+		return true;
 	}
 
 	// Send 'SCORE' command
 	bool GameProcess::SendScore() {
-		if (player1_ == nullptr || player2_ == nullptr) {
+		if (player1_ == nullptr || player2_ == nullptr || gs_.CurEnd == 0) {
 			return false;
 		}
 		std::stringstream sstream;
 		sstream << "SCORE" << gs_.Score[gs_.CurEnd - 1];
 		player1_->Send(sstream.str().c_str());
-		player2_->Send(sstream.str().c_str());
+		if (player1_ != player2_) {
+			player2_->Send(sstream.str().c_str());
+		}
 
 		return true;
 	}

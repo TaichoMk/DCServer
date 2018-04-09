@@ -68,43 +68,64 @@ int main(void)
 		(float)atof(config_params[0][2].c_str()),
 		atoi(config_params[0][0].c_str())
 	);
-	game_process.player1_->kBufferSize;
-	char msg[digital_curling::Player::kBufferSize];
 
-	// send message to player1
-	game_process.player1_->Send("ISREADY");
-
-	game_process.player1_->Recv(msg);
-	// split message as token
-	std::vector<std::string> tokens = digital_curling::SpritAsTokens(msg, " ");
-	if (tokens.size() == 0) {
-		cerr << "Error: empty message" << endl;
+	// Send "ISREADY" to player1
+	if (!game_process.IsReady(game_process.player1_)) {
 		return 0;
 	}
-	if (tokens[0] != "READYOK") {
-		cerr << "Error: invalid command '" << tokens[0] << "'" << endl;
-		return 0;
+	if (game_process.player1_ != game_process.player2_) {
+		if (!game_process.IsReady(game_process.player2_)) {
+			return 0;
+		}
 	}
-	game_process.SendState();
-	Sleep(10);  // MAGIC NUMBER: wait for SendState();
 
-	game_process.player1_->Send("GO 0 0");
+	// Send "NEWGAME" to players
+	game_process.NewGame();
+	Sleep(10);  // MAGIC NUMBER: wait for NewGame
+	
+	for (int end_num = 0; end_num < game_process.gs_.LastEnd; end_num++) {
 
-	game_process.player1_->Recv(msg);
-	// split message as token
-	tokens = digital_curling::SpritAsTokens(msg, " ");
-	if (tokens.size() == 0) {
-		cerr << "Error: empty message" << endl;
-		return 0;
+		// Prepare for End
+		//game_process.PrepareEnd();
+
+		for (int shot_num = 0; shot_num < 16; shot_num++) {
+			// Send "SETSTATE" and "POSITION" to players
+			game_process.SendState();
+			Sleep(10);  // MAGIC NUMBER: wait for SendState;
+
+			// Send "GO" to player1
+			// game_process.Go();
+			{  // Temporary code for "GO" command
+				char msg[digital_curling::Player::kBufferSize];
+				game_process.player1_->Send("GO 0 0");
+				game_process.player1_->Recv(msg);
+				// split message as token
+				std::vector<std::string> tokens;
+				tokens = digital_curling::SpritAsTokens(msg, " ");
+				if (tokens.size() == 0) {
+					cerr << "Error: empty message" << endl;
+					return 0;
+				}
+				if (tokens[0] != "BESTSHOT") {
+					cerr << "Error: invalid command '" << tokens[0] << "'" << endl;
+					return 0;
+				}
+				// print tokens
+				for (int unsigned i = 1; i < tokens.size(); i++) {
+					cerr << "tokens[" << i << "] = " << tokens[i] << endl;
+				}
+			}
+
+			// Simulation
+			game_process.RunSimulation();
+		}
+
+		// Send 'SCORE' to players
+		game_process.SendScore();
 	}
-	if (tokens[0] != "BESTSHOT") {
-		cerr << "Error: invalid command '" << tokens[0] << "'" << endl;
-		return 0;
-	}
-	// print tokens
-	for (int unsigned i = 1; i < tokens.size(); i++) {
-		cerr << "tokens[" << i << "] = " << tokens[i] << endl;
-	}
+
+	// Exit Game
+	//game_process.Exit();
 
 	return 1;
 }
