@@ -97,7 +97,16 @@ namespace digital_curling
 
 	// Simulate a shot
 	bool GameProcess::RunSimulation() {
-		cerr << "Simulating..." << endl;
+		{ // temporary code
+			cerr << "Simulating..." << endl;
+			if (gs_.ShotNum < 15) {
+				gs_.ShotNum++;
+			}
+			else {
+				gs_.ShotNum = 0;
+				gs_.CurEnd++;
+			}
+		}
 		//Simulation(&gs_, best_shot_, random_, &run_shot_, -1);
 
 		return true;
@@ -109,7 +118,7 @@ namespace digital_curling
 			return false;
 		}
 		std::stringstream sstream;
-		sstream << "SCORE" << gs_.Score[gs_.CurEnd - 1];
+		sstream << "SCORE " << gs_.Score[gs_.CurEnd - 1];
 		player1_->Send(sstream.str().c_str());
 		if (player1_ != player2_) {
 			player2_->Send(sstream.str().c_str());

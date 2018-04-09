@@ -8,7 +8,11 @@ using std::string;
 int main(void)
 {
 	// Open config file
+#if 1
 	const string config_file_path = "config.txt";
+#else
+	const string config_file_path = "C:\\DigitalCurling\\config.txt";
+#endif
 	std::vector<string> config_params[3];
 	//                               [0][0] : type of rules (0: standard, 1:mix doubles)
 	//                               [0][1] : number of ends (1 - 10)
@@ -83,12 +87,15 @@ int main(void)
 	game_process.NewGame();
 	Sleep(10);  // MAGIC NUMBER: wait for NewGame
 	
-	for (int end_num = 0; end_num < game_process.gs_.LastEnd; end_num++) {
+	//for (int i = 0; i < 2; i++) {
+	while (game_process.gs_.CurEnd < game_process.gs_.LastEnd) {
+		//cerr << "gs_.CurEnd = " << game_process.gs_.CurEnd << endl;
 
 		// Prepare for End
 		//game_process.PrepareEnd();
 
-		for (int shot_num = 0; shot_num < 16; shot_num++) {
+		//for (int i = 0; i < 2; i++) {
+		do {
 			// Send "SETSTATE" and "POSITION" to players
 			game_process.SendState();
 			Sleep(10);  // MAGIC NUMBER: wait for SendState;
@@ -118,14 +125,17 @@ int main(void)
 
 			// Simulation
 			game_process.RunSimulation();
-		}
+			Sleep(10);  // MAGIC NUMBER: wait for Simulation;
+		} while (game_process.gs_.ShotNum != 0);
 
 		// Send 'SCORE' to players
 		game_process.SendScore();
+		Sleep(10);  // MAGIC NUMBER: wait for SendScore;
 	}
 
 	// Exit Game
 	//game_process.Exit();
+	cerr << "exitng..." << endl;
 
 	return 1;
 }
