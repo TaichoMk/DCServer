@@ -42,5 +42,5 @@ namespace digital_curling
 	};
 
 	// Split message as tokens
-	std::vector<std::string> SpritAsTokens(char *message);
+	std::vector<std::string> SpritAsTokens(char *message, const char* const delim);
 }

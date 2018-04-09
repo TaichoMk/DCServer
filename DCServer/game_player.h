@@ -17,6 +17,10 @@ namespace digital_curling
 		// Recieve message from player
 		virtual int Recv( char *message) = 0;
 
+		// Create process 
+		// This function returns 0 when CreateProcess was failed
+		virtual int InitProcess() = 0;
+
 		std::string name_;  // Player's name
 		int time_limit_;    // Timelimit
 		int time_remain_;   // Timelimit remaining

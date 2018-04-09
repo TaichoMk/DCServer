@@ -50,7 +50,9 @@ namespace digital_curling
 		// Send SETSTATE command ('SETSTATE ShotNum CurEnd LastEnd WhiteToMove')
 		sstream << "SETSTATE " << gs_.ShotNum << " " << gs_.CurEnd << " " << gs_.LastEnd << " " << gs_.WhiteToMove;
 		player1_->Send(sstream.str().c_str());
-		//player2_->Send(sstream.str().c_str());
+		if (player1_ != player2_) {
+			player2_->Send(sstream.str().c_str());
+		}
 
 		// Clear sstream
 		sstream.str("");
@@ -62,7 +64,9 @@ namespace digital_curling
 			sstream << " " <<  gs_.body[i][0] << " " << gs_.body[i][1];
 		}
 		player1_->Send(sstream.str().c_str());
-		//player2_->Send(sstream.str().c_str());
+		if (player1_ != player2_) {
+			player2_->Send(sstream.str().c_str());
+		}
 
 		return true;
 	}
@@ -88,13 +92,13 @@ namespace digital_curling
 	}
 
 	// Split message as tokens (message will be destroyed)
-	std::vector<std::string> SpritAsTokens(char *message) {
+	std::vector<std::string> SpritAsTokens(char *message, const char* const delim) {
 		std::vector<std::string> tokens;
 		char *ctx;
-		char *token = strtok_s(message, " ", &ctx);
+		char *token = strtok_s(message, delim, &ctx);
 		while (token != nullptr) {
 			tokens.push_back(token);
-			token = strtok_s(nullptr, " ", &ctx);
+			token = strtok_s(nullptr, delim, &ctx);
 		}
 		return tokens;
 	}

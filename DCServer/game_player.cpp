@@ -24,24 +24,36 @@ namespace digital_curling
 	// recieve message from player
 	int LocalPlayer::Send(const char *message)
 	{
-		cout << "LocalPlayer <- Server '" << message << "'" << endl;
+		//cout << "Server -> LocalPlayer: '" << message << "'" << endl;
+		DWORD NumberOfBytesWritten = 0;
+		if (this->write_pipe_ != NULL) {
+			WriteFile(this->write_pipe_, message, strlen(message) + 1, &NumberOfBytesWritten, NULL);
+		}
 
-		return 1;
+		return NumberOfBytesWritten;
 	}
 
 	// recieve message from player
 	int LocalPlayer::Recv(char *message)
 	{
+		/*
+		// Recieve from console
 		std::string str;
 		std::getline(std::cin, str);
 		if (str.size() > kBufferSize) {
 			return 0;
 		}
 		str.copy(message, str.size(), 0);
+		*/
+		DWORD NumberOfBytesRead = 0;
+		memset(message, 0, kBufferSize);
+		if (this->read_pipe_ != NULL) {
+			ReadFile(this->read_pipe_, message, kBufferSize, &NumberOfBytesRead, NULL);
+		}
 
-		cerr << "LocalPlayer -> Server '" << message << "'" << endl;
+		//cout << "LocalPlayer -> Server: '" << message << "'" << endl;
 		
-		return 1;
+		return NumberOfBytesRead;
 	}
 
 	// Create Proccess
@@ -57,19 +69,19 @@ namespace digital_curling
 
 		// server -> COM
 		if (!CreatePipe(&read_tmp, &write_pipe_, &sa, 0)) {
-			return;
+			return 0;
 		}
 		if (!DuplicateHandle(GetCurrentProcess(), read_tmp, GetCurrentProcess(), &read_pipe_, 0, TRUE, DUPLICATE_SAME_ACCESS)) {
-			return;
+			return 0;
 		}
 		CloseHandle(read_tmp);
 
 		// COM -> server
 		if (!CreatePipe(&read_pipe_, &write_tmp, &sa, 0)) {
-			return;
+			return 0;
 		}
-		if (!DuplicateHandle(GetCurrentProcess(), write_tmp, GetCurrentProcess(), &(this->write_pipe_), 0, TRUE, DUPLICATE_SAME_ACCESS)) {
-			return;
+		if (!DuplicateHandle(GetCurrentProcess(), write_tmp, GetCurrentProcess(), &write_pipe_, 0, TRUE, DUPLICATE_SAME_ACCESS)) {
+			return 0;
 		}
 		CloseHandle(write_tmp);
 
@@ -83,7 +95,7 @@ namespace digital_curling
 		si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
 
 		if (si.hStdOutput == INVALID_HANDLE_VALUE || si.hStdError == INVALID_HANDLE_VALUE) {
-			return;
+			return 0;
 		}
 
 		/*** create process ***/
