@@ -95,19 +95,43 @@ namespace digital_curling
 		return true;
 	}
 
+	// Send 'GO' command and wait for recieving 'BESTSHOT' from a player
+	bool GameProcess::Go() {
+		char msg[digital_curling::Player::kBufferSize];
+		Player *next_player = (gs_.WhiteToMove == 0) ? player1_ : player2_;
+		next_player->Send("GO 0 0");
+		next_player->Recv(msg);
+		// Split message as token
+		std::vector<std::string> tokens;
+		tokens = digital_curling::SpritAsTokens(msg, " ");
+		if (tokens.size() == 0) {
+			cerr << "Error: too few aguments in message: '" << msg << "'" << endl;
+			return 0;
+		}
+		if (tokens[0] == "BESTSHOT") {
+			// Set best_shot_ if command is 'BESTSHOT'
+			if (tokens.size() < 4) {
+				cerr << "Error: too few aguments in message: '" << msg << "'" << endl;
+				return 0;
+			}
+			best_shot_.x = (float)atof(tokens[1].c_str());
+			best_shot_.y = (float)atof(tokens[2].c_str());
+			best_shot_.angle = (bool)atoi(tokens[3].c_str());
+		}
+		else if (tokens[0] == "CONSEED") {
+			// Jump to conseed and exit process if command is 'CONSEED'
+			// TODO: jump to conseed and exit process
+			return 0;
+		}
+		else {
+			// Print error message and exit
+			cerr << "Error: invalid command '" << tokens[0] << "'" << endl;
+			return 0;
+		}
+	}
+
 	// Simulate a shot
 	bool GameProcess::RunSimulation() {
-		/*
-		{ // temporary code
-			cerr << "Simulating..." << endl;
-			if (gs_.ShotNum < 15) {
-				gs_.ShotNum++;
-			}
-			else {
-				gs_.ShotNum = 0;
-				gs_.CurEnd++;
-			}
-		}*/
 		Simulation(&gs_, best_shot_, random_, &run_shot_, -1);
 
 		return true;

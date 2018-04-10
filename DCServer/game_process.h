@@ -31,7 +31,7 @@ namespace digital_curling
 		bool SendState();
 
 		// Send 'GO' command and wait for recieving 'BESTSHOT' from a player
-		//bool Go();
+		bool Go();
 
 		// Simulate a shot
 		bool RunSimulation();

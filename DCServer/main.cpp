@@ -8,11 +8,7 @@ using std::string;
 int main(void)
 {
 	// Open config file
-#if 1
 	const string config_file_path = "config.txt";
-#else
-	const string config_file_path = "C:\\DigitalCurling\\config.txt";
-#endif
 	std::vector<string> config_params[3];
 	//                               [0][0] : type of rules (0: standard, 1:mix doubles)
 	//                               [0][1] : number of ends (1 - 10)
@@ -108,30 +104,7 @@ int main(void)
 			Sleep(10);  // MAGIC NUMBER: wait for SendState;
 
 			// Send "GO" to player1
-			// game_process.Go();
-			{  // Temporary code for "GO" command
-				char msg[digital_curling::Player::kBufferSize];
-				game_process.player1_->Send("GO 0 0");
-				game_process.player1_->Recv(msg);
-				// split message as token
-				std::vector<std::string> tokens;
-				tokens = digital_curling::SpritAsTokens(msg, " ");
-				if (tokens.size() == 0) {
-					cerr << "Error: empty message" << endl;
-					return 0;
-				}
-				if (tokens[0] != "BESTSHOT") {
-					cerr << "Error: invalid command '" << tokens[0] << "'" << endl;
-					return 0;
-				}
-				// print tokens
-				for (int unsigned i = 1; i < tokens.size(); i++) {
-					cerr << "tokens[" << i << "] = " << tokens[i] << endl;
-				}
-				game_process.best_shot_.x = (float)atof(tokens[1].c_str());
-				game_process.best_shot_.y = (float)atof(tokens[2].c_str());
-				game_process.best_shot_.angle = (bool)atoi(tokens[3].c_str());
-			}
+			game_process.Go();
 
 			// Simulation
 			game_process.RunSimulation();
