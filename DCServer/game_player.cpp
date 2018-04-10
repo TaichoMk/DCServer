@@ -15,7 +15,7 @@ namespace digital_curling
 			time_limit_ = time_remain_ = time_limit;
 		}
 		else {
-			time_limit_ = time_remain_ = -1;
+			time_limit_ = time_remain_ = 0;
 		}
 	}
 

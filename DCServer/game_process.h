@@ -6,6 +6,7 @@
 
 #include <string>
 #include <sstream>
+#include <ctime>
 #include <vector>
 
 namespace digital_curling

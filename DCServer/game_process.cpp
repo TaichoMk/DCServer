@@ -97,36 +97,60 @@ namespace digital_curling
 
 	// Send 'GO' command and wait for recieving 'BESTSHOT' from a player
 	bool GameProcess::Go() {
-		char msg[digital_curling::Player::kBufferSize];
+		// Prepare "GO" command
+		std::stringstream sstream;
+		sstream << "GO " << player1_->time_remain_ << " " << player2_->time_remain_;
 		Player *next_player = (gs_.WhiteToMove == 0) ? player1_ : player2_;
-		next_player->Send("GO 0 0");
+
+		// get starting time
+		time_t time_start = clock();
+
+		// Send "GO" command
+		next_player->Send(sstream.str().c_str());
+
+		// Recieve message
+		char msg[digital_curling::Player::kBufferSize];
 		next_player->Recv(msg);
+
+		// Check timelimit
+		time_t time_used = clock() - time_start;
+		if (next_player->time_limit_ > 0) {
+			if (time_used > next_player->time_remain_) {
+				// TODO: jump to timeover and exit process
+				cerr << "TimeOver" << endl;
+				return false;
+			}
+			next_player->time_remain_ -= (int)time_used;
+		}
+
 		// Split message as token
 		std::vector<std::string> tokens;
 		tokens = digital_curling::SpritAsTokens(msg, " ");
 		if (tokens.size() == 0) {
 			cerr << "Error: too few aguments in message: '" << msg << "'" << endl;
-			return 0;
+			return false;
 		}
 		if (tokens[0] == "BESTSHOT") {
 			// Set best_shot_ if command is 'BESTSHOT'
 			if (tokens.size() < 4) {
 				cerr << "Error: too few aguments in message: '" << msg << "'" << endl;
-				return 0;
+				return false;
 			}
 			best_shot_.x = (float)atof(tokens[1].c_str());
 			best_shot_.y = (float)atof(tokens[2].c_str());
 			best_shot_.angle = (bool)atoi(tokens[3].c_str());
+
+			return true;
 		}
 		else if (tokens[0] == "CONSEED") {
 			// Jump to conseed and exit process if command is 'CONSEED'
 			// TODO: jump to conseed and exit process
-			return 0;
+			return false;
 		}
 		else {
 			// Print error message and exit
 			cerr << "Error: invalid command '" << tokens[0] << "'" << endl;
-			return 0;
+			return false;
 		}
 	}
 
