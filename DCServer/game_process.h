@@ -39,6 +39,9 @@ namespace digital_curling
 		// Send 'SCORE' command
 		bool SendScore();
 
+		// Exit game process
+		bool Exit();
+
 		GameState gs_;         // State of the game
 		float     random_;     // Size of random number
 

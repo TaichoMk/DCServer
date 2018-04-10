@@ -42,6 +42,13 @@ int main(void)
 		i++;
 	}
 
+	// Load 'CurlingSimulator.dll
+	string library_path = "CurlingSimulator.dll";
+	if (!LoadFunction(library_path)){
+		cerr << "failed to open " << library_path << endl;
+		return 0;
+	}
+
 	// Initialise LocalPlayer 1
 	digital_curling::Player *p1;
 	p1 = new digital_curling::LocalPlayer(config_params[1][1], atoi(config_params[1][2].c_str()));
@@ -121,6 +128,9 @@ int main(void)
 				for (int unsigned i = 1; i < tokens.size(); i++) {
 					cerr << "tokens[" << i << "] = " << tokens[i] << endl;
 				}
+				game_process.best_shot_.x = (float)atof(tokens[1].c_str());
+				game_process.best_shot_.y = (float)atof(tokens[2].c_str());
+				game_process.best_shot_.angle = (bool)atoi(tokens[3].c_str());
 			}
 
 			// Simulation
@@ -134,8 +144,8 @@ int main(void)
 	}
 
 	// Exit Game
-	//game_process.Exit();
-	cerr << "exitng..." << endl;
+	game_process.Exit();
+	//cerr << "exitng..." << endl;
 
 	return 1;
 }

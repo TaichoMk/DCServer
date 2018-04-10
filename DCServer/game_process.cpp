@@ -97,6 +97,7 @@ namespace digital_curling
 
 	// Simulate a shot
 	bool GameProcess::RunSimulation() {
+		/*
 		{ // temporary code
 			cerr << "Simulating..." << endl;
 			if (gs_.ShotNum < 15) {
@@ -106,8 +107,8 @@ namespace digital_curling
 				gs_.ShotNum = 0;
 				gs_.CurEnd++;
 			}
-		}
-		//Simulation(&gs_, best_shot_, random_, &run_shot_, -1);
+		}*/
+		Simulation(&gs_, best_shot_, random_, &run_shot_, -1);
 
 		return true;
 	}
@@ -122,6 +123,52 @@ namespace digital_curling
 		player1_->Send(sstream.str().c_str());
 		if (player1_ != player2_) {
 			player2_->Send(sstream.str().c_str());
+		}
+
+		return true;
+	}
+
+	bool GameProcess::Exit() {
+		// Calclate total score
+		int score_p1 = 0;
+		int score_p2 = 0;
+		for (int i = 0; i < gs_.LastEnd; i++) {
+			if (gs_.Score[i] > 0) {
+				score_p1 += gs_.Score[i];
+			}
+			else {
+				score_p2 -= gs_.Score[i];
+			}
+		}
+		if (score_p1 > score_p2) {
+			player1_->Send("GAMEOVER WIN");
+			if (player1_ != player2_) {
+				player2_->Send("GAMEOVER LOSE");
+			}
+		}
+		else if (score_p1 < score_p2) {
+			player1_->Send("GAMEOVER LOSE");
+			if (player1_ != player2_) {
+				player2_->Send("GAMEOVER WIN");
+			}
+		}
+		else {
+			player1_->Send("GAMEOVER DRAW");
+			if (player1_ != player2_) {
+				player2_->Send("GAMEOVER DRAW");
+			}
+		}
+
+		Sleep(10);
+
+		// Exit Player Process
+		if (player1_->ExitProcess() == 0) {
+			cerr << "failed to player1_->ExitProcess()" << endl;
+		}
+		if (player1_ != player2_) {
+			if (player2_->ExitProcess() == 0) {
+				cerr << "failed to player2_->ExitProcess()" << endl;
+			}
 		}
 
 		return true;

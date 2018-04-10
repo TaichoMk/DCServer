@@ -101,4 +101,12 @@ namespace digital_curling
 		/*** create process ***/
 		return CreateProcess(NULL, (LPSTR)path_.c_str(), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi_);
 	}
+
+	// Exit process
+	int LocalPlayer::ExitProcess() {
+		if (!TerminateProcess(pi_.hProcess, 0)) {
+			return 0;
+		}
+		return 1;
+	}
 }

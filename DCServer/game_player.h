@@ -20,6 +20,8 @@ namespace digital_curling
 		// Create process 
 		// This function returns 0 when CreateProcess was failed
 		virtual int InitProcess() = 0;
+		// Exit process
+		virtual int ExitProcess() = 0;
 
 		std::string name_;  // Player's name
 		int time_limit_;    // Timelimit
@@ -42,6 +44,8 @@ namespace digital_curling
 		// Create process 
 		// This function returns 0 when CreateProcess was failed
 		int InitProcess();
+		// Exit process
+		int ExitProcess();
 
 		std::string path_;  // Full path of .exe file
 
