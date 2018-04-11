@@ -70,13 +70,102 @@ namespace digital_curling
 			return false;
 		}
 
-		if (rule_type_ == 1) {
-			// for mix doubles rule
-			// TODO: Implement
-		}
-
 		// Clear gs_.body
-		memset(gs_.body, 0, 2 * 16 *sizeof(int));
+		memset(gs_.body, 0, 2 * 16 * sizeof(int));
+
+		// For mix doubles rule
+		if (rule_type_ == 1) {
+			using namespace constant_num;
+			const float   GUARD_OFFSET_X = 1.070f;
+			const float   GUARD_OFFSET_Y = 2.286f;
+			const SHOTPOS CENTER_HOUSE(kCenterX, kTeeY - kHouse4FootR - kStoneR, 0);
+			const SHOTPOS CENTER_GUARD(kCenterX, kTeeY + kHouseR + GUARD_OFFSET_Y, 0);
+			const SHOTPOS SIDE_HOUSE(kCenterX - kHouse8FootR, kTeeY + kStoneR, 0);
+			const SHOTPOS SIDE_GUARD(kCenterX - GUARD_OFFSET_X, kTeeY + kHouseR + GUARD_OFFSET_Y, 0);
+
+			// Set player which "PUTSTONE" command send to
+			Player *player = (gs_.WhiteToMove) ? player1_ : player2_;
+
+			// Send "PUTSTONE" command
+			char msg[Player::kBufferSize];
+			std::vector<std::string> tokens;
+			player->Send("PUTSTONE");
+			// Recieve from player
+			//player->Recv(msg);
+
+			// set putstone_type
+			int putstone_type = 1;
+			tokens = digital_curling::SpritAsTokens(msg, " ");
+			if (tokens.size() == 0) {
+				cerr << "Error: too few aguments in message: '" << msg << "'" << endl;
+			}
+			if (tokens[0] == "PUTSTONE") {
+				if (tokens.size() >= 2) {
+					putstone_type = atoi(tokens[1].c_str());
+				}
+			}
+			switch (putstone_type)
+			{
+			case 0:
+				gs_.body[0][0] = CENTER_GUARD.x;
+				gs_.body[0][1] = CENTER_GUARD.y;
+				gs_.body[1][0] = CENTER_HOUSE.x;
+				gs_.body[1][1] = CENTER_HOUSE.y;
+				gs_.WhiteToMove ^= 1;
+				break;
+			case 1:
+				gs_.body[0][0] = CENTER_HOUSE.x;
+				gs_.body[0][1] = CENTER_HOUSE.y;
+				gs_.body[1][0] = CENTER_GUARD.x;
+				gs_.body[1][1] = CENTER_GUARD.y;
+				break;
+			case 2:
+				gs_.body[0][0] = SIDE_GUARD.x;
+				gs_.body[0][1] = SIDE_GUARD.y;
+				gs_.body[1][0] = SIDE_HOUSE.x;
+				gs_.body[1][1] = SIDE_HOUSE.y;
+				gs_.WhiteToMove ^= 1;
+				break;
+			case 3:
+				gs_.body[0][0] = SIDE_HOUSE.x;
+				gs_.body[0][1] = SIDE_HOUSE.y;
+				gs_.body[1][0] = SIDE_GUARD.x;
+				gs_.body[1][1] = SIDE_GUARD.y;
+				break;
+			default:
+				gs_.body[0][0] = CENTER_HOUSE.x;
+				gs_.body[0][1] = CENTER_HOUSE.y;
+				gs_.body[1][0] = CENTER_GUARD.x;
+				gs_.body[1][1] = CENTER_GUARD.y;
+				break;
+			}
+
+			// Write dummy statements to logfile
+			std::stringstream sstream;
+			for (int i = 0; i < 6; i++) {
+				// Clear sstream
+				sstream.str("");
+				sstream.clear(std::stringstream::goodbit);
+
+				// Set dummy statements
+				sstream << "[" << 
+					std::setfill('0') << std::setw(2) << gs_.CurEnd <<
+					std::setfill('0') << std::setw(2) << i << "]" << endl;
+				sstream << "POSITION=POSITION";
+				for (int i = 0; i < 16; i++) {
+					sstream << " " << gs_.body[i][0] << " " << gs_.body[i][1];
+				}
+				sstream << endl;
+				sstream << "SETSTATE=SETSTATE " << i << " " << gs_.CurEnd << " " << gs_.LastEnd << " " << gs_.WhiteToMove << endl;
+				sstream << "BESTSHOT=BESTSHOT 0 0 0" << endl;
+				sstream << "RUNSHOT=RUNSHOT 0 0 0";
+
+				// Write to logfile
+				log_file_.Write(sstream.str());
+			}
+
+			gs_.ShotNum = 6;
+		}
 
 		return true;
 	}
@@ -121,7 +210,6 @@ namespace digital_curling
 		}
 		// Write to logfile
 		log_file_.Write("SETSTATE=" + sstream.str());
-
 
 		return true;
 	}
