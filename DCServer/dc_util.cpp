@@ -1,5 +1,6 @@
 #include "dc_util.h"
 
+
 SIMULATION_FUNC Simulation = NULL;
 SIMULATIONEX_FUNC SimulationEx = NULL;
 CREATESHOT_FUNC CreateShot = NULL;

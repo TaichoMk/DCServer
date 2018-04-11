@@ -2,12 +2,12 @@
 // TODO: いずれシミュレータライブラリ（CurlingSimulator.h）へ移す
 #pragma once
 
-#include "CurlingSimulator.h"
-
 #include <Windows.h>
 
 #include <iostream>
 #include <string>
+
+#include "CurlingSimulator.h"
 
 // TODO: シミュレータ側で GameState, ShotPos, ShotVecを定義してコメントアウトする
 typedef struct _GAMESTATE GameState;

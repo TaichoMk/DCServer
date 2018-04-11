@@ -27,7 +27,7 @@ namespace digital_curling
 		//cout << "Server -> LocalPlayer: '" << message << "'" << endl;
 		DWORD NumberOfBytesWritten = 0;
 		if (this->write_pipe_ != NULL) {
-			WriteFile(this->write_pipe_, message, strlen(message) + 1, &NumberOfBytesWritten, NULL);
+			WriteFile(this->write_pipe_, message, (DWORD)strlen(message) + 1, &NumberOfBytesWritten, NULL);
 		}
 
 		return NumberOfBytesWritten;

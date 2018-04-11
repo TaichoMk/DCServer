@@ -1,13 +1,17 @@
 #pragma once
 
+#include <Windows.h>
+
+#include <ctime>
+#include <iostream>
+#include <random>
+#include <string>
+#include <sstream>
+#include <vector>
+
 #include "CurlingSimulator.h"
 #include "dc_util.h"
 #include "game_player.h"
-
-#include <string>
-#include <sstream>
-#include <ctime>
-#include <vector>
 
 namespace digital_curling
 {
@@ -26,7 +30,7 @@ namespace digital_curling
 		bool NewGame();
 
 		// Prepare for End
-		//bool PrepareEnd();
+		bool PrepareEnd();
 
 		// Send 'SETSTATE' command and 'POSITION' command to both player
 		bool SendState();

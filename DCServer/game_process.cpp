@@ -1,5 +1,7 @@
 #include "game_process.h"
 
+
+
 using std::cerr;
 using std::endl;
 
@@ -64,6 +66,18 @@ namespace digital_curling
 		return true;
 	}
 
+	// Prepare for End
+	bool GameProcess::PrepareEnd() {
+		if (player1_ == nullptr || player2_ == nullptr) {
+			return false;
+		}
+
+		if (rule_type_ == 1) {
+			// for mix doubles rule
+
+		}
+	}
+
 	// Send 'SETSTATE' command and 'POSITION' command
 	bool GameProcess::SendState() {
 		if (player1_ == nullptr || player2_ == nullptr) {
@@ -97,6 +111,9 @@ namespace digital_curling
 
 	// Send 'GO' command and wait for recieving 'BESTSHOT' from a player
 	bool GameProcess::Go() {
+		if (player1_ == nullptr || player2_ == nullptr) {
+			return false;
+		}
 		// Prepare "GO" command
 		std::stringstream sstream;
 		sstream << "GO " << player1_->time_remain_ << " " << player2_->time_remain_;
@@ -177,6 +194,9 @@ namespace digital_curling
 	}
 
 	bool GameProcess::Exit() {
+		if (player1_ == nullptr || player2_ == nullptr) {
+			return false;
+		}
 		// Calclate total score
 		int score_p1 = 0;
 		int score_p2 = 0;
