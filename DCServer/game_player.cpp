@@ -17,7 +17,9 @@ namespace digital_curling
 		std::istringstream sstream(path);
 		std::string name;
 		while (std::getline(sstream, name, '\\'));
-		name_ = name; 
+		std::istringstream exe_file_name(name);
+		std::getline(exe_file_name, name, '.');
+		name_ = name;
 
 		// set timelimit
 		if (time_limit > 0) {

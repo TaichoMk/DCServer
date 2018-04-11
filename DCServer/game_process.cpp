@@ -1,7 +1,5 @@
 #include "game_process.h"
 
-
-
 using std::cerr;
 using std::endl;
 
