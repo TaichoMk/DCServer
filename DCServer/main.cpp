@@ -95,14 +95,11 @@ namespace digital_curling {
 		game_process.NewGame();
 		Sleep(10);  // MAGIC NUMBER: wait for NewGame
 
-					//for (int i = 0; i < 2; i++) {
 		while (game_process.gs_.CurEnd < game_process.gs_.LastEnd) {
-			//cerr << "gs_.CurEnd = " << game_process.gs_.CurEnd << endl;
 
 			// Prepare for End
 			game_process.PrepareEnd();
 
-			//for (int i = 0; i < 2; i++) {
 			do {
 				// Send "SETSTATE" and "POSITION" to players
 				game_process.SendState();

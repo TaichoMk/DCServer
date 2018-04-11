@@ -16,8 +16,10 @@ namespace digital_curling
 		// get name from path
 		std::istringstream sstream(path);
 		std::string name;
+		// remove directories from path
 		while (std::getline(sstream, name, '\\'));
 		std::istringstream exe_file_name(name);
+		// remove .exe from path
 		std::getline(exe_file_name, name, '.');
 		name_ = name;
 
