@@ -2,15 +2,9 @@
 
 #include <Windows.h>
 
-#include <ctime>
-#include <iostream>
-#include <iomanip>
-#include <random>
 #include <string>
-#include <sstream>
 #include <vector>
 
-#include "CurlingSimulator.h"
 #include "dc_util.h"
 #include "game_player.h"
 #include "game_log.h"

@@ -1,5 +1,9 @@
 #pragma warning(disable:4996)  // disable error (string::copy)
+
 #include "game_player.h"
+
+#include <iostream>
+#include <sstream>
 
 using std::cin;
 using std::cout;
@@ -49,15 +53,6 @@ namespace digital_curling
 	// recieve message from player
 	int LocalPlayer::Recv(char *message)
 	{
-		/*
-		// Recieve from console
-		std::string str;
-		std::getline(std::cin, str);
-		if (str.size() > kBufferSize) {
-			return 0;
-		}
-		str.copy(message, str.size(), 0);
-		*/
 		DWORD NumberOfBytesRead = 0;
 		memset(message, 0, kBufferSize);
 		if (this->read_pipe_ != NULL) {

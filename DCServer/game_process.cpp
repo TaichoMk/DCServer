@@ -1,5 +1,11 @@
 #include "game_process.h"
 
+#include <ctime>
+#include <iostream>
+#include <iomanip>
+#include <random>
+#include <sstream>
+
 using std::cerr;
 using std::endl;
 

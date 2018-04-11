@@ -1,10 +1,7 @@
 #pragma once
 
 #include <Windows.h>
-
-#include <iostream>
 #include <string>
-#include <sstream>
 
 namespace digital_curling
 {
@@ -30,7 +27,7 @@ namespace digital_curling
 		
 	};
 
-	// Player running on local (using standard IO to communicate)
+	// Player running on local (using standard pipe to communicate)
 	class LocalPlayer : public Player {
 	public:
 

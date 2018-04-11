@@ -2,7 +2,6 @@
 
 #include "game_log.h"
 
-#include <Windows.h>
 #include <ctime>
 #include <fstream>
 #include <string>

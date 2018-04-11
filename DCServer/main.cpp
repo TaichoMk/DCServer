@@ -1,4 +1,13 @@
-#include "main.h"
+#include <windows.h>
+
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <thread>
+#include <vector>
+
+#include "game_process.h"
 
 using std::cerr;
 using std::endl;
