@@ -7,7 +7,7 @@ using std::endl;
 
 namespace digital_curling
 {
-	GameProcess::GameProcess(Player *p1, Player *p2, int num_ends, float random, int rule_type) : rule_type_(rule_type) {
+	GameProcess::GameProcess(Player *p1, Player *p2, int num_ends, float random, int rule_type) : rule_type_(rule_type), log_file_(p1, p2, random) {
 
 		// Initialize state of the game
 		memset(&gs_, 0, sizeof(GameState));

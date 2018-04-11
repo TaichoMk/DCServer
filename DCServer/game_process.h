@@ -57,6 +57,7 @@ namespace digital_curling
 		Player    *player1_;   // Player 1
 		Player    *player2_;   // Player 2
 
+		GameLog log_file_;     // log file
 	};
 
 	// Split message as tokens
