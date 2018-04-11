@@ -7,7 +7,7 @@ using std::string;
 namespace digital_curling {
 
 	// CUI server
-	int CuiServer() {}
+	int CuiServer() { return 0; }
 
 	// Simple server for DigitalCurling
 	int SimpleServer() {
@@ -72,7 +72,7 @@ namespace digital_curling {
 		}
 		Sleep(10);  // MAGIC NUMBER: wait for process created
 
-					// Create GameProcess
+		// Create GameProcess
 		digital_curling::GameProcess game_process(
 			p1,
 			p2,

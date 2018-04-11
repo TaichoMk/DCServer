@@ -10,7 +10,16 @@ namespace digital_curling
 {
 	LocalPlayer::LocalPlayer(std::string path, int time_limit)
 	{
+		// set file path
 		path_ = path;
+
+		// get name from path
+		std::istringstream sstream(path);
+		std::string name;
+		while (std::getline(sstream, name, '\\'));
+		name_ = name; 
+
+		// set timelimit
 		if (time_limit > 0) {
 			time_limit_ = time_remain_ = time_limit;
 		}

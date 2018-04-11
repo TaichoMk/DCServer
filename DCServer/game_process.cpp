@@ -76,6 +76,8 @@ namespace digital_curling
 			// for mix doubles rule
 
 		}
+
+		return true;
 	}
 
 	// Send 'SETSTATE' command and 'POSITION' command

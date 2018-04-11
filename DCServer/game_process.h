@@ -12,6 +12,7 @@
 #include "CurlingSimulator.h"
 #include "dc_util.h"
 #include "game_player.h"
+#include "game_log.h"
 
 namespace digital_curling
 {
