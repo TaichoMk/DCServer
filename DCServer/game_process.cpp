@@ -72,8 +72,11 @@ namespace digital_curling
 
 		if (rule_type_ == 1) {
 			// for mix doubles rule
-
+			// TODO: Implement
 		}
+
+		// Clear gs_.body
+		memset(gs_.body, 0, 2 * 16 *sizeof(int));
 
 		return true;
 	}
@@ -83,14 +86,12 @@ namespace digital_curling
 		if (player1_ == nullptr || player2_ == nullptr) {
 			return false;
 		}
+		// Write "[0000]" statement to logfile
 		std::stringstream sstream;
-
-		// Send SETSTATE command ('SETSTATE ShotNum CurEnd LastEnd WhiteToMove')
-		sstream << "SETSTATE " << gs_.ShotNum << " " << gs_.CurEnd << " " << gs_.LastEnd << " " << gs_.WhiteToMove;
-		player1_->Send(sstream.str().c_str());
-		if (player1_ != player2_) {
-			player2_->Send(sstream.str().c_str());
-		}
+		sstream << "[" <<
+			std::setfill('0') << std::setw(2) << gs_.CurEnd <<
+			std::setfill('0') << std::setw(2) << gs_.ShotNum << "]";
+		log_file_.Write(sstream.str());
 
 		// Clear sstream
 		sstream.str("");
@@ -105,6 +106,22 @@ namespace digital_curling
 		if (player1_ != player2_) {
 			player2_->Send(sstream.str().c_str());
 		}
+		// Write to logfile
+		log_file_.Write("POSITION=" + sstream.str());
+
+		// Clear sstream
+		sstream.str("");
+		sstream.clear(std::stringstream::goodbit);
+
+		// Send SETSTATE command ('SETSTATE ShotNum CurEnd LastEnd WhiteToMove')
+		sstream << "SETSTATE " << gs_.ShotNum << " " << gs_.CurEnd << " " << gs_.LastEnd << " " << gs_.WhiteToMove;
+		player1_->Send(sstream.str().c_str());
+		if (player1_ != player2_) {
+			player2_->Send(sstream.str().c_str());
+		}
+		// Write to logfile
+		log_file_.Write("SETSTATE=" + sstream.str());
+
 
 		return true;
 	}
@@ -128,6 +145,9 @@ namespace digital_curling
 		// Recieve message
 		char msg[digital_curling::Player::kBufferSize];
 		next_player->Recv(msg);
+
+		// Write to logfile
+		log_file_.Write("BESTSHOT=" + std::string(msg));  // TODO: move to appropriate place
 
 		// Check timelimit
 		time_t time_used = clock() - time_start;
@@ -175,6 +195,11 @@ namespace digital_curling
 	bool GameProcess::RunSimulation() {
 		Simulation(&gs_, best_shot_, random_, &run_shot_, -1);
 
+		// Write to log file
+		std::stringstream sstream;
+		sstream << "RUNSHOT=RUNSHOT " << run_shot_.x << ' ' << run_shot_.y << ' ' << run_shot_.angle;
+		log_file_.Write(sstream.str());
+
 		return true;
 	}
 
@@ -183,12 +208,31 @@ namespace digital_curling
 		if (player1_ == nullptr || player2_ == nullptr || gs_.CurEnd == 0) {
 			return false;
 		}
+
 		std::stringstream sstream;
+
+		// Write "[0016]" statement to logfile
+		sstream << "[" <<
+			std::setfill('0') << std::setw(2) << gs_.CurEnd-1 <<
+			std::setfill('0') << std::setw(2) << 16 << "]" << endl;
+		sstream << "POSITION=POSITION";
+		for (int i = 0; i < 16; i++) {
+			sstream << " " << gs_.body[i][0] << " " << gs_.body[i][1];
+		}
+		log_file_.Write(sstream.str());
+
+		// Clear sstream
+		sstream.str("");
+		sstream.clear(std::stringstream::goodbit);
+
+		// Sned "SCORE" command
 		sstream << "SCORE " << gs_.Score[gs_.CurEnd - 1];
 		player1_->Send(sstream.str().c_str());
 		if (player1_ != player2_) {
 			player2_->Send(sstream.str().c_str());
 		}
+		// Write to logfile
+		log_file_.Write("SCORE=" + sstream.str());
 
 		return true;
 	}
