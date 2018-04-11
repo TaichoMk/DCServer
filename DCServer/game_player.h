@@ -5,7 +5,7 @@
 
 namespace digital_curling
 {
-	// Information of player (anstruct class)
+	// Information of player (abstruct class)
 	class Player {
 	public:
 		static const size_t kBufferSize = 1024;
