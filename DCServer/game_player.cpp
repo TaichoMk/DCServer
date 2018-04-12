@@ -12,7 +12,7 @@ using std::endl;
 
 namespace digital_curling
 {
-	LocalPlayer::LocalPlayer(std::string path, int time_limit)
+	LocalPlayer::LocalPlayer(std::string path, int time_limit, float random_x, float random_y)
 	{
 		// set file path
 		path_ = path;
@@ -34,6 +34,10 @@ namespace digital_curling
 		else {
 			time_limit_ = time_remain_ = 0;
 		}
+
+		// set random numbers
+		random_x_ = random_x;
+		random_y = random_y;
 	}
 
 	LocalPlayer::~LocalPlayer() {}

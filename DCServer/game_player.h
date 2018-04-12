@@ -24,6 +24,9 @@ namespace digital_curling
 		std::string name_;  // Player's name
 		int time_limit_;    // Timelimit
 		int time_remain_;   // Timelimit remaining
+
+		float random_x_;    // random number x
+		float random_y_;    // random number y
 		
 	};
 
@@ -31,7 +34,7 @@ namespace digital_curling
 	class LocalPlayer : public Player {
 	public:
 
-		LocalPlayer( std::string path, int time_limit);
+		LocalPlayer( std::string path, int time_limit, float random_x, float random_y);
 		~LocalPlayer();
 
 		// Send message to player

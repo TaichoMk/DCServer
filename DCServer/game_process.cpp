@@ -18,7 +18,7 @@ namespace digital_curling
 		gs_.LastEnd = num_ends;  // set LastEnd as number of ends
 
 		// Set random number
-		random_ = random;
+		//random_ = random;
 
 		// Initialize bestshot and runshot
 		memset(&best_shot_, 0, sizeof(ShotVec));
@@ -287,7 +287,9 @@ namespace digital_curling
 
 	// Simulate a shot
 	bool GameProcess::RunSimulation() {
-		Simulation(&gs_, best_shot_, random_, &run_shot_, -1);
+		Player *p = (gs_.WhiteToMove) ? player2_ : player1_;
+		Simulation(&gs_, best_shot_, p->random_x_, &run_shot_, -1);
+		//Simmulation(&gs_, best_shot_, p->random_x_, p->random_y_, &run_shot, -1, nullptr, 0);
 
 		// Write to log file
 		std::stringstream sstream;

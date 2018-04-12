@@ -60,7 +60,11 @@ namespace digital_curling {
 
 		// Initialise LocalPlayer 1
 		digital_curling::Player *p1;
-		p1 = new digital_curling::LocalPlayer(config_params[1][1], atoi(config_params[1][2].c_str()));
+		p1 = new digital_curling::LocalPlayer(
+			config_params[1][1], 
+			atoi(config_params[1][2].c_str()),
+			(float)atof(config_params[0][2].c_str()),
+			(float)atof(config_params[0][3].c_str()));
 		if (p1->InitProcess() == 0) {
 			cerr << "failed to create process for player 1" << endl;
 			return 0;
@@ -73,7 +77,11 @@ namespace digital_curling {
 			p2 = p1;
 		}
 		else {
-			p2 = new digital_curling::LocalPlayer(config_params[2][1], atoi(config_params[2][2].c_str()));
+			p2 = new digital_curling::LocalPlayer(
+				config_params[2][1],
+				atoi(config_params[2][2].c_str()),
+				(float)atof(config_params[0][2].c_str()),
+				(float)atof(config_params[0][3].c_str()));
 			if (p2->InitProcess() == 0) {
 				cerr << "failed to create process for player 2" << endl;
 				return 0;
@@ -114,7 +122,7 @@ namespace digital_curling {
 				game_process.SendState();
 				Sleep(10);  // MAGIC NUMBER: wait for SendState;
 
-							// Send "GO" to player1
+				// Send "GO" to player
 				game_process.Go();
 
 				// Simulation
