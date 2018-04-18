@@ -1,5 +1,12 @@
 #include "game_process.h"
 
+#ifdef _DEBUG
+#pragma comment( lib, "lib/DCSimulator_d.lib" )
+#endif
+#ifndef _DEBUG
+#pragma comment( lib, "lib/DCSimulator.lib" )
+#endif
+
 #include <ctime>
 #include <iostream>
 #include <iomanip>
@@ -81,13 +88,13 @@ namespace digital_curling
 
 		// For mix doubles rule
 		if (rule_type_ == 1) {
-			using namespace constant_num;
+			//using namespace constant_num;
 			const float   GUARD_OFFSET_X = 1.070f;
 			const float   GUARD_OFFSET_Y = 2.286f;
-			const SHOTPOS CENTER_HOUSE(kCenterX, kTeeY - kHouse4FootR - kStoneR, 0);
-			const SHOTPOS CENTER_GUARD(kCenterX, kTeeY + kHouseR + GUARD_OFFSET_Y, 0);
-			const SHOTPOS SIDE_HOUSE(kCenterX - kHouse8FootR, kTeeY + kStoneR, 0);
-			const SHOTPOS SIDE_GUARD(kCenterX - GUARD_OFFSET_X, kTeeY + kHouseR + GUARD_OFFSET_Y, 0);
+			const ShotPos CENTER_HOUSE(kCenterX, kTeeY - kHouse4FootR - kStoneR, 0);
+			const ShotPos CENTER_GUARD(kCenterX, kTeeY + kHouseR + GUARD_OFFSET_Y, 0);
+			const ShotPos SIDE_HOUSE(kCenterX - kHouse8FootR, kTeeY + kStoneR, 0);
+			const ShotPos SIDE_GUARD(kCenterX - GUARD_OFFSET_X, kTeeY + kHouseR + GUARD_OFFSET_Y, 0);
 
 			// Set player which "PUTSTONE" command send to
 			Player *player = (gs_.WhiteToMove) ? player1_ : player2_;
@@ -288,7 +295,9 @@ namespace digital_curling
 	// Simulate a shot
 	bool GameProcess::RunSimulation() {
 		Player *p = (gs_.WhiteToMove) ? player2_ : player1_;
-		Simulation(&gs_, best_shot_, p->random_x_, &run_shot_, -1);
+		//Simulation(&gs_, best_shot_, p->random_x_, &run_shot_, -1);
+		b2simulator::Simulation(&gs_, best_shot_, p->random_x_, p->random_y_, 
+			&run_shot_, nullptr, -1);
 		//Simmulation(&gs_, best_shot_, p->random_x_, p->random_y_, &run_shot, -1, nullptr, 0);
 
 		// Write to log file
@@ -301,7 +310,7 @@ namespace digital_curling
 
 	// Send 'SCORE' command
 	bool GameProcess::SendScore() {
-		if (player1_ == nullptr || player2_ == nullptr || gs_.CurEnd == 0) {
+		if (player1_ == nullptr || player2_ == nullptr) {
 			return false;
 		}
 
@@ -309,7 +318,7 @@ namespace digital_curling
 
 		// Write "[0016]" statement to logfile
 		sstream << "[" <<
-			std::setfill('0') << std::setw(2) << gs_.CurEnd-1 <<
+			std::setfill('0') << std::setw(2) << gs_.CurEnd <<
 			std::setfill('0') << std::setw(2) << 16 << "]" << endl;
 		sstream << "POSITION=POSITION";
 		for (int i = 0; i < 16; i++) {
@@ -322,7 +331,7 @@ namespace digital_curling
 		sstream.clear(std::stringstream::goodbit);
 
 		// Sned "SCORE" command
-		sstream << "SCORE " << gs_.Score[gs_.CurEnd - 1];
+		sstream << "SCORE " << gs_.Score[gs_.CurEnd];
 		player1_->Send(sstream.str().c_str());
 		if (player1_ != player2_) {
 			player2_->Send(sstream.str().c_str());

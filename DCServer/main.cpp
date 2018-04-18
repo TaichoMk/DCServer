@@ -52,11 +52,11 @@ namespace digital_curling {
 		}
 
 		// Load 'CurlingSimulator.dll
-		string library_path = "CurlingSimulator.dll";
-		if (!LoadFunction(library_path)) {
-			cerr << "failed to open " << library_path << endl;
-			return 0;
-		}
+		//string library_path = "CurlingSimulator.dll";
+		//if (!LoadFunction(library_path)) {
+		//	cerr << "failed to open " << library_path << endl;
+		//	return 0;
+		//}
 
 		// Initialise LocalPlayer 1
 		digital_curling::Player *p1;
@@ -128,10 +128,12 @@ namespace digital_curling {
 				// Simulation
 				game_process.RunSimulation();
 				Sleep(10);  // MAGIC NUMBER: wait for Simulation;
-			} while (game_process.gs_.ShotNum != 0);
+			} while (game_process.gs_.ShotNum < 16);
 
 			// Send 'SCORE' to players
 			game_process.SendScore();
+			game_process.gs_.Clear();
+			game_process.gs_.CurEnd++;
 			Sleep(10);  // MAGIC NUMBER: wait for SendScore;
 		}
 

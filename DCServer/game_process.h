@@ -5,7 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "dc_util.h"
+//#include "dc_util.h"
+#include "lib/dcurling_simulator.h"
 #include "game_player.h"
 #include "game_log.h"
 
